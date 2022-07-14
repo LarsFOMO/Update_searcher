@@ -3,9 +3,11 @@ import os
 import time
 import git
 import datetime
+import shutil
+import distutils.dir_util
 from github import Github
-from pygit2 import clone_repository
-from os import path
+#from os import path
+from git.repo.base import Repo
 
 
 # Check ob Update verfügbar
@@ -16,6 +18,7 @@ try:
 
 except Exception:
     print("Fehler (0)")
+
 
 #   Abänderungsdatum der lokalen Datei
 try:
@@ -58,15 +61,27 @@ while(eingabe_ok == 1):
     antwort = input("Ein neues Update ist verfügbar.Möchten Sie es installieren?\n(J,N)\n")
     if(antwort == "J"):
 
-#   Cloned Repo auf Lokal
+#   Cloned Repo auf Lokalpath = "/tmp/year"
+        tmp_path = "/home/lars/Dokumente/Folder_tmp"  
+        local_dest_path = '/home/lars/Dokumente/Test'                       #   Zielpfad                      
+        os.mkdir(tmp_path)                                                  #   Neuen Ordner erstellen
+        
         try:
             repo_URL = 'https://github.com/LarsFOMO/Test-Update.git'
-            local_path = '/home/lars/Dokumente/Test'
-            repoClone = clone_repository(repo_URL, local_path)
+            
+            try:
+                Repo.clone_from(repo_URL,tmp_path)
+            except Exception:
+                print('Fehler (4)')
 
         except Exception:
-            print("Fehler (4)")
+            print("Fehler (5)")
 
+
+
+        shutil.rmtree(tmp_path)                                             #   tmp Ordner löschen  
+         
+         
         #for reposi in my_git.get_user().get_repos():
         #    print(reposi.name)
 
