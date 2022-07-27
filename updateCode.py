@@ -8,11 +8,17 @@ from github import Github
 from git.repo.base import Repo
 
 
-# Check ob Update verfügbar
-#   ACHTUNG: Auf ein privates Repository kann nur mit einem Access-Token zugegriffen werden
+#   ACHTUNG[1]: Auf ein privates Repository kann nur mit einem Access-Token zugegriffen werden
+#       Der Access-Token muss nachdem das Repository auf private gestellt wurde, erzeugt werden.
+#       Nur so ist es möglich auf ein privates Repository zuzugreifen. Alles andere funktioniert nicht.
+#   Access-Token erzeugen: Settings --> Developer settings --> Personal access tokens
+#   ACHTUNG[2]: Dieser Code darf bei einem Update nicht überschrieben/verändert werden, da sonst der 
+#   Access Token ungültig wird.
+ 
+#   Check ob Update verfügbar 
 try:
     #my_git = Github("LarsFOMO", "2003Lars")                                #   Login mit User+PW
-    my_git = Github(" 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")            #   Login mit Token
+    my_git = Github("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")             #   Login mit Token
     my_repo = my_git.get_repo("LarsFOMO/Test-Update")                       #   Repo auswählen
     
 
@@ -40,9 +46,8 @@ try:
     hours_dazu = datetime.timedelta(hours = hours)
     last_commit_date = commit.commit.author.date + hours_dazu
     t2_time = last_commit_date
-    print("Last Commit:", t2_time.strftime("     %d.%m.%Y, %H:%M:%S"))#last_commit_date) 
+    print("Last Commit:", t2_time.strftime("     %d.%m.%Y, %H:%M:%S"))
     
-
 except Exception:
     print("Fehler (2)")
 
@@ -64,8 +69,8 @@ while(eingabe_ok == 1):
     if(antwort == "J"):
 
 #   Cloned Repo auf Lokal
-        tmp_path = "/home/lars/Dokumente/Folder_tmp"  
-        local_dest_path = '/home/lars/Dokumente/Test'                       #   Zielpfad                      
+        tmp_path = '/home/lars/Dokumente/Foldertmp' #"/home/lars/Dokumente/Folder_tmp"  
+        local_dest_path = '/home/lars/Dokumente/Test'  #'/home/lars/Dokumente/Test'                       #   Zielpfad                      
         os.mkdir(tmp_path)                                                  #   Neuen Ordner erstellen
         
         try:
@@ -90,4 +95,3 @@ while(eingabe_ok == 1):
 
     elif((antwort != "J") and (antwort != "N")):
         print("Keine gültige Eingabe. Wiederholen Sie die Eingabe")
-
