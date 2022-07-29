@@ -6,6 +6,12 @@ import shutil
 import distutils.dir_util
 from github import Github
 from git.repo.base import Repo
+from gitlab import Gitlab
+import gitlab_clone
+import subprocess
+from subprocess import Popen
+import gitlab
+from subprocess import check_output
 
 
 #   ACHTUNG[1]: Auf ein privates Repository kann nur mit einem Access-Token zugegriffen werden
@@ -15,15 +21,19 @@ from git.repo.base import Repo
 #   ACHTUNG[2]: Dieser Code darf bei einem Update nicht überschrieben/verändert werden, da sonst der 
 #   Access Token ungültig wird.
  
+fehler = 0
 #   Check ob Update verfügbar 
 try:
     #my_git = Github("LarsFOMO", "2003Lars")                                #   Login mit User+PW
-    my_git = Github("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")             #   Login mit Token
-    my_repo = my_git.get_repo("LarsFOMO/Test-Update")                       #   Repo auswählen
-    
+    #my_git = Github("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")     #Gitlab("NE2Ffawd5s3HgE3XcXfn")#    #   Login mit Token
+    gl = gitlab.Gitlab(url='http://alpmine.synology.me:8080',private_token='NE2Ffawd5s3HgE3XcXfn')
+    #my_repo = my_git.get_repo("LarsFOMO/Test-Update")       #('Code-Tester')                #   Repo auswählen
+    gl.auth()
+    project = gl.projects.get('paulsner_lars/Test')
 
 except Exception:
     print("Fehler (0)")
+    fehler = 1
 
 #   Abänderungsdatum der lokalen Datei
 try:
@@ -36,9 +46,15 @@ try:
 
 except Exception:
     print("Fehler (1)")
+    fehler = 1
 
 #   Letztes Commit Datum
+#repo_url = 'http://alpmine.synology.me:8080/paulsner_lars/Test.git'
+#process = subprocess.Popen(["git", "ls-remote", repo_url], stdout=subprocess.PIPE)
+date_string = check_output('git log -1 --pretty=format:"%ci"'.split()).decode()
+print(date_string)
 try:
+    print(project.events.list(10))
     master = my_repo.get_branch("master")
     sha_com = master.commit
     commit = my_repo.get_commit(sha=sha_com.sha)
@@ -50,6 +66,7 @@ try:
     
 except Exception:
     print("Fehler (2)")
+    fehler = 1
 
 #   Prüft ob neuste Version auf Lokal
 try:
@@ -61,6 +78,7 @@ try:
         
 except Exception:
     print("Fehler (3)")
+    fehler = 1
 
 #   Update durchführen (Abfrage)?
 eingabe_ok = 1                                                              #   Check ob gültige Eingabe
@@ -73,21 +91,28 @@ while(eingabe_ok == 1):
         local_dest_path = '/home/lars/Dokumente/Test'  #'/home/lars/Dokumente/Test'                       #   Zielpfad                      
         os.mkdir(tmp_path)                                                  #   Neuen Ordner erstellen
         
-        try:
-            repo_URL = 'https://github.com/LarsFOMO/Test-Update.git'
-            try:
-                Repo.clone_from(repo_URL,tmp_path)                          #   In tmp_path kopieren
-            except Exception:
-                print('Fehler (4)')
+       ## repo_URL = 'https://github.com/LarsFOMO/Test-Update.git'
+        git_url = 'http://alpmine.synology.me:8080/paulsner_lars/Test'#'http://gitlab-goe/paulsner_lars/test.git'
 
+        try:
+            #Repo.clone_from(git_url,tmp_path)
+            #subprocess.call(['git','clone',git_url,tmp_path])
+            git.Repo.clone_from(git_url,tmp_path)
+            
+            #Popen(['git','clone',git_url,tmp_path])
+           ## Repo.clone_from(repo_URL,tmp_path)                          #   In tmp_path kopieren
         except Exception:
-            print("Fehler (5)")
+            print('Fehler (4)')
+            fehler = 1
+
 
         distutils.dir_util.copy_tree(tmp_path,local_dest_path)              #   Überschreibe alte Verion
 
-        shutil.rmtree(tmp_path)                                             #   tmp Ordner löschen  
+        shutil.rmtree(tmp_path,ignore_errors=True)                                           #   tmp Ordner löschen  
 
         eingabe_ok = 0
+        if(fehler == 0):
+            print("Das Update wurde erfolgreich durchgeführt!")
 
     elif(antwort == "N"):
         eingabe_ok = 0
