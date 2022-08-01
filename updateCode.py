@@ -9,7 +9,7 @@ from git.repo.base import Repo
 from gitlab import Gitlab
 import gitlab_clone
 import subprocess
-from subprocess import Popen
+from subprocess import Popen, PIPE
 import gitlab
 from subprocess import check_output
 import dateutil.parser as parser
@@ -69,6 +69,9 @@ except Exception:
 
 #   Prüft ob neuste Version auf Lokal
 try:
+    repoTimestamp = int(repoTimestamp)
+    localTimestamp = int(localTimestamp)+7200
+
     if(repoTimestamp > localTimestamp):
         print("Es ist ein neues Update verfügbar...")
     elif(repoTimestamp < localTimestamp):
@@ -90,16 +93,11 @@ while(eingabe_ok == 1):
         local_dest_path = '/home/lars/Dokumente/Test'                                                   #   Zielpfad                      
         os.mkdir(tmp_path)                                                                              #   Neuen Ordner erstellen
         
-       ## repo_URL = 'https://github.com/LarsFOMO/Test-Update.git'
         git_url = 'http://alpmine.synology.me:8080/paulsner_lars/Test'                                  
 
         try:
-            #Repo.clone_from(git_url,tmp_path)
-            #subprocess.call(['git','clone',git_url,tmp_path])
-            git.Repo.clone_from(git_url,tmp_path)
-            
-            #Popen(['git','clone',git_url,tmp_path])
-           ## Repo.clone_from(repo_URL,tmp_path)                                                        #   In tmp_path kopieren
+            Repo.clone_from('http://oauth2:f5CzY5syLBy89HPro4ur@alpmine.synology.me:8080/paulsner_lars/Test.git',tmp_path)
+        
         except Exception:
             print('Fehler (4)')
             fehler = 1
