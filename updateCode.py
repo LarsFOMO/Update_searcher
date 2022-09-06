@@ -27,7 +27,7 @@ fehler = 0
 try:
     #my_git = Github("LarsFOMO", "2003Lars")                                                            #   Login mit User+PW
     #my_git = Github("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")                                        #   Login mit Token
-    gl = gitlab.Gitlab(url='http://alpmine.synology.me:8080',private_token='')
+    gl = gitlab.Gitlab(url='http://alpmine.synology.me:8080',private_token=('gZ8_LPox9xg-yrvpxeZs'))
     #my_repo = my_git.get_repo("LarsFOMO/Test-Update")       #('Code-Tester')                           #   Repo auswählen
     gl.auth()
     project = gl.projects.get('paulsner_lars/Test')
@@ -96,7 +96,7 @@ while(eingabe_ok == 1):
         git_url = 'http://alpmine.synology.me:8080/paulsner_lars/Test'                                  
 
         try:
-            Repo.clone_from('http://oauth2:f5CzY5syLBy89HPro4ur@alpmine.synology.me:8080/paulsner_lars/Test.git',tmp_path)
+            Repo.clone_from('http://oauth2:gZ8_LPox9xg-yrvpxeZs@alpmine.synology.me:8080/paulsner_lars/Test.git',tmp_path)
         
         except Exception:
             print('Fehler (4)')
